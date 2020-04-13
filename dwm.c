@@ -198,7 +198,8 @@ static void maprequest(XEvent *e);
 static void monocle(Monitor *m);
 static void motionnotify(XEvent *e);
 static void movemouse(const Arg *arg);
-static Client *nexttagged(Client *c);
+// For attachaside old
+// static Client *nexttagged(Client *c);
 static Client *nexttiled(Client *c);
 static void pop(Client *);
 static void propertynotify(XEvent *e);
@@ -441,13 +442,20 @@ attach(Client *c)
 
 void
 attachaside(Client *c) {
-	Client *at = nexttagged(c);
-	if(!at) {
-		attach(c);
-		return;
-		}
-	c->next = at->next;
-	at->next = c;
+// For old attachaside
+//	Client *at = nexttagged(c);
+//	if(!at) {
+//		attach(c);
+//		return;
+//		}
+//	c->next = at->next;
+//	at->next = c;
+	Client *below = c->mon->clients;
+	for (; below && below->next; below = below->next);
+	if (below)
+		below->next = c;
+	else
+		c->mon->clients = c;
 }
 
 
@@ -1390,15 +1398,16 @@ movemouse(const Arg *arg)
 	}
 }
 
- Client *
-nexttagged(Client *c) {
-	Client *walked = c->mon->clients;
-	for(;
-		walked && (walked->isfloating || !ISVISIBLEONTAG(walked, c->tags));
-		walked = walked->next
-	);
-	return walked;
-}
+// For old attachaside
+// Client *
+//nexttagged(Client *c) {
+//	Client *walked = c->mon->clients;
+//	for(;
+//		walked && (walked->isfloating || !ISVISIBLEONTAG(walked, c->tags));
+//		walked = walked->next
+//	);
+//	return walked;
+//}
 
 Client *
 nexttiled(Client *c)
